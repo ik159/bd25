@@ -54,11 +54,9 @@
         margin: 0 auto 16px;
       }
       .site-img-container img {
-        width: 100%;
+        width: 80px;
         height: 100%;
         object-fit: contain;
-        border-radius: 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
       }
       h1 {
         font-size: 22px;
@@ -109,9 +107,7 @@
         box-shadow: 0 4px 12px rgba(255, 221, 87, 0.5);
       }
       .img-container {
-        width: 100%;
-        max-width: 400px;
-        height: auto;
+        max-width: 270px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -121,16 +117,16 @@
         overflow: hidden;
         flex-shrink: 0;
       }
-
       .img-container img {
-        width: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
         height: auto;
         object-fit: contain;
         border-radius: 16px;
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
         transition: transform 0.3s ease, opacity 0.4s ease;
       }
-
       .img-container img:hover {
         transform: scale(1.05);
       }
@@ -217,13 +213,8 @@
         fill: white;
       }
     </style>
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="lkbv.png" />
-
-    <!-- Apple Touch Icon (for iOS home screen) -->
     <link rel="apple-touch-icon" href="lkbv.png" />
-
-    <!-- Open Graph / Social Preview -->
     <meta property="og:title" content="Dinner ka Sawaal 🍻" />
     <meta
       property="og:description"
@@ -236,13 +227,6 @@
     <div class="wrap">
       <div class="card" id="quizCard">
         <div id="backButton" class="back-btn" onclick="goBack()">&lt; Back</div>
-
-        <!-- Site Image -->
-        <div class="site-img-container">
-          <img src="lkbv.png" alt="Site Logo" />
-        </div>
-
-        <h1>Dinner ka Sawaal 🍻</h1>
         <div id="quizContainer"></div>
       </div>
     </div>
@@ -305,6 +289,10 @@
         if (current >= questions.length) return;
         const q = questions[current];
         quizContainer.innerHTML = `
+          <div class="site-img-container">
+            <img src="lkbv.png" alt="Site Logo" />
+          </div>
+          <h1>Dinner ka Sawaal 🍻</h1>
           <div class="progress-text">${current + 1} of ${questions.length}</div>
           <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
           <div class='q'>
@@ -322,6 +310,7 @@
         `;
         backButton.style.display = current > 0 ? "block" : "none";
         updateProgress();
+        onResponsePage = false;
       }
 
       function handleButton(action) {
@@ -343,6 +332,7 @@
       function showResponse(img, text, isFinalNo = false) {
         onResponsePage = true;
         quizContainer.innerHTML = `
+        <h1>Dinner ka Sawaal 🍻</h1>
           <div class="img-container">
             <img src="${img}" alt="Response Image">
           </div>
@@ -358,7 +348,6 @@
 
       function nextQuestion() {
         current++;
-        onResponsePage = false;
         renderQuestion();
       }
 
@@ -374,7 +363,8 @@
 
       function updateProgress() {
         const percent = (current / questions.length) * 100;
-        document.getElementById("progressBar").style.width = percent + "%";
+        const bar = document.getElementById("progressBar");
+        if (bar) bar.style.width = percent + "%";
       }
 
       function showPrize(img, text) {
