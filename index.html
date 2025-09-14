@@ -47,6 +47,19 @@
       .card:hover {
         transform: translateY(-4px);
       }
+      /* Site Image */
+      .site-img-container {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 16px;
+      }
+      .site-img-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
       h1 {
         font-size: 22px;
         font-weight: 700;
@@ -207,6 +220,12 @@
     <div class="wrap">
       <div class="card" id="quizCard">
         <div id="backButton" class="back-btn" onclick="goBack()">&lt; Back</div>
+
+        <!-- Site Image -->
+        <div class="site-img-container">
+          <img src="lkbv.png" alt="Site Logo" />
+        </div>
+
         <h1>Dinner ka Sawaal 🍻</h1>
         <div id="quizContainer"></div>
       </div>
@@ -261,7 +280,7 @@
       ];
 
       let current = 0;
-      let onResponsePage = false; // Tracks if user is on a response page
+      let onResponsePage = false;
 
       const quizContainer = document.getElementById("quizContainer");
       const backButton = document.getElementById("backButton");
@@ -329,7 +348,6 @@
 
       function goBack() {
         if (onResponsePage) {
-          // If on response page, go back to current question
           onResponsePage = false;
           renderQuestion();
         } else if (current > 0) {
