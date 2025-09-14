@@ -34,13 +34,14 @@
         border-radius: 16px;
         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
         width: 100%;
+        max-width: 450px;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         position: relative;
         transition: transform 0.3s ease;
-        max-height: 90vh;
+        height: 650px;
         overflow-y: auto;
       }
       .card:hover {
@@ -63,8 +64,7 @@
         text-align: center;
       }
       .q h3 {
-        font-size: 5vw;
-        max-font-size: 26px;
+        font-size: 26px;
         font-weight: 700;
         color: #ffdd57;
         text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
@@ -73,7 +73,7 @@
       }
       .button-row {
         display: flex;
-        gap: 12px;
+        gap: 16px;
         justify-content: center;
         flex-wrap: wrap;
         width: 100%;
@@ -82,7 +82,7 @@
         flex: 1;
         min-width: 120px;
         max-width: 180px;
-        padding: 14px 20px;
+        padding: 12px 20px;
         border: 0;
         border-radius: 12px;
         font-weight: 600;
@@ -96,21 +96,21 @@
         box-shadow: 0 4px 12px rgba(255, 221, 87, 0.5);
       }
       .img-container {
-        width: 90%;
+        width: 100%;
         max-width: 400px;
-        height: 35vh;
+        height: 200px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 16px 0;
+        margin: 12px 0;
         background: #111827;
         border-radius: 12px;
         overflow: hidden;
         flex-shrink: 0;
       }
       .img-container img {
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
         object-fit: cover;
         border-radius: 12px;
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
@@ -121,12 +121,10 @@
       }
       .yes-text {
         margin-top: 16px;
-        font-size: 4.5vw;
-        max-font-size: 18px;
+        font-size: 16px;
         color: #ffd3a5;
         line-height: 1.6;
         text-align: center;
-        padding: 0 10px;
       }
       .prize {
         margin-top: 20px;
@@ -203,32 +201,6 @@
         height: 18px;
         fill: white;
       }
-
-      /* Mobile adjustments */
-      @media (max-width: 480px) {
-        .card {
-          padding: 30px 15px;
-          height: auto;
-          max-height: 95vh;
-        }
-        .img-container {
-          height: 30vh;
-          margin: 12px 0;
-        }
-        .yes-text {
-          font-size: 16px;
-          padding: 0 8px;
-        }
-        .q h3 {
-          font-size: 18px;
-          line-height: 1.4;
-        }
-        button {
-          min-width: 100px;
-          max-width: 150px;
-          padding: 10px 14px;
-        }
-      }
     </style>
   </head>
   <body>
@@ -289,7 +261,7 @@
       ];
 
       let current = 0;
-      let onResponsePage = false;
+      let onResponsePage = false; // Tracks if user is on a response page
 
       const quizContainer = document.getElementById("quizContainer");
       const backButton = document.getElementById("backButton");
@@ -357,6 +329,7 @@
 
       function goBack() {
         if (onResponsePage) {
+          // If on response page, go back to current question
           onResponsePage = false;
           renderQuestion();
         } else if (current > 0) {
