@@ -41,13 +41,13 @@
         justify-content: center;
         position: relative;
         transition: transform 0.3s ease;
-        height: auto;
-        max-height: 90vh;
+        height: 650px;
         overflow-y: auto;
       }
       .card:hover {
         transform: translateY(-4px);
       }
+      /* Site Image */
       .site-img-container {
         width: 100px;
         height: 100px;
@@ -112,15 +112,16 @@
         width: 100%;
         max-width: 400px;
         height: auto;
-        margin: 16px 0;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin: 16px 0;
         background: #111827;
         border-radius: 16px;
         overflow: hidden;
         flex-shrink: 0;
       }
+
       .img-container img {
         width: 100%;
         height: auto;
@@ -129,6 +130,7 @@
         box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
         transition: transform 0.3s ease, opacity 0.4s ease;
       }
+
       .img-container img:hover {
         transform: scale(1.05);
       }
@@ -215,10 +217,13 @@
         fill: white;
       }
     </style>
-
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="lkbv.png" />
+
+    <!-- Apple Touch Icon (for iOS home screen) -->
     <link rel="apple-touch-icon" href="lkbv.png" />
+
+    <!-- Open Graph / Social Preview -->
     <meta property="og:title" content="Dinner ka Sawaal 🍻" />
     <meta
       property="og:description"
@@ -232,6 +237,7 @@
       <div class="card" id="quizCard">
         <div id="backButton" class="back-btn" onclick="goBack()">&lt; Back</div>
 
+        <!-- Site Image -->
         <div class="site-img-container">
           <img src="lkbv.png" alt="Site Logo" />
         </div>
@@ -255,66 +261,149 @@
           noImg: "no1.jpg",
         },
         {
-          q: "Chalo toh fir, Birthday dinner ke liye ready ho? 🍽️",
-          button1: "Ready!",
-          button2: "Nahi 😢",
+          q: "Monday raat 8 baje ko mood hai free hone ka? ⏰",
+          button1: "Yesss",
+          button2: "No",
+          button1Action: "yes",
+          button2Action: "no",
+          yesText: "Sahi raaste pe ho aap",
+          noText: "Lag raha hai ki UPSC ka tayyari kar rahe ho",
+          yesImg: "yes2.jpg",
+          noImg: "no2.jpg",
+        },
+        {
+          q: "Brewery vibes pasand hai ya tapri vibe? 🕺",
+          button1: "Brewery",
+          button2: "Tapri",
+          button1Action: "yes",
+          button2Action: "no",
+          yesText: "Waah! Tum toh khiladi ho",
+          noText: "Pre-booked hai location 🙏",
+          yesImg: "yes3.jpg",
+          noImg: "no3.jpg",
+        },
+        {
+          q: "Toh phir aa rahe ho na mere birthday dinner pe? ✅",
+          button1: "Haan bilkul",
+          button2: "Nahi yaar",
           button1Action: "final",
-          button2Action: "final",
-          yesText: "Venue: Secret 🕵️‍♂️<br>Time: 8 PM<br><br>See you soon!",
-          yesImg: "dinner-invite.jpg",
+          button2Action: "no",
+          yesText: "Bas isi ka intezaar tha! Milte hai phir..",
+          noText: "Samajh gaya, bade aadmi ban gaye ho",
+          yesImg: "yes4.jpg",
+          noImg: "no4.jpg",
         },
       ];
 
-      let currentQuestion = 0;
+      let current = 0;
+      let onResponsePage = false;
 
-      function showQuestion(index) {
-        const q = questions[index];
-        const container = document.getElementById("quizContainer");
+      const quizContainer = document.getElementById("quizContainer");
+      const backButton = document.getElementById("backButton");
 
-        container.innerHTML = `
-          <div class="q">
+      function renderQuestion() {
+        if (current >= questions.length) return;
+        const q = questions[current];
+        quizContainer.innerHTML = `
+          <div class="progress-text">${current + 1} of ${questions.length}</div>
+          <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+          <div class='q'>
             <h3>${q.q}</h3>
-            <div class="img-container">
-              <img src="${q.yesImg}" alt="Question Image" />
-            </div>
+            <p></p>
             <div class="button-row">
-              <button onclick="handleAnswer('${q.button1Action}')">${q.button1}</button>
-              <button onclick="handleAnswer('${q.button2Action}')">${q.button2}</button>
+              <button onclick="handleButton('${q.button1Action}')">${
+          q.button1
+        }</button>
+              <button onclick="handleButton('${q.button2Action}')">${
+          q.button2
+        }</button>
             </div>
           </div>
         `;
-
-        document.getElementById("backButton").style.display =
-          index > 0 ? "block" : "none";
+        backButton.style.display = current > 0 ? "block" : "none";
+        updateProgress();
       }
 
-      function handleAnswer(action) {
-        if (action === "yes" || action === "no") {
-          currentQuestion++;
-          showQuestion(currentQuestion);
+      function handleButton(action) {
+        const q = questions[current];
+        if (action === "yes") {
+          if (current === questions.length - 1) {
+            showPrize(q.yesImg, q.yesText);
+          } else {
+            showResponse(q.yesImg, q.yesText);
+          }
+        } else if (action === "no") {
+          const isFinalNo = current === questions.length - 1;
+          showResponse(q.noImg, q.noText, isFinalNo);
         } else if (action === "final") {
-          const container = document.getElementById("quizContainer");
-          container.innerHTML = `
-            <div class="q">
-              <h3>${questions[currentQuestion].yesText}</h3>
-              <div class="img-container">
-                <img src="${questions[currentQuestion].yesImg}" alt="Final Image" />
-              </div>
-            </div>
-          `;
-          document.getElementById("backButton").style.display = "block";
+          showPrize(q.yesImg, q.yesText);
         }
+      }
+
+      function showResponse(img, text, isFinalNo = false) {
+        onResponsePage = true;
+        quizContainer.innerHTML = `
+          <div class="img-container">
+            <img src="${img}" alt="Response Image">
+          </div>
+          <p class='yes-text'>${text}</p>
+          ${
+            !isFinalNo
+              ? "<br><button onclick='nextQuestion()'>Aage badha jaaye ></button>"
+              : ""
+          }
+        `;
+        updateProgress();
+      }
+
+      function nextQuestion() {
+        current++;
+        onResponsePage = false;
+        renderQuestion();
       }
 
       function goBack() {
-        if (currentQuestion > 0) {
-          currentQuestion--;
-          showQuestion(currentQuestion);
+        if (onResponsePage) {
+          onResponsePage = false;
+          renderQuestion();
+        } else if (current > 0) {
+          current--;
+          renderQuestion();
         }
       }
 
-      // Initial load
-      showQuestion(currentQuestion);
+      function updateProgress() {
+        const percent = (current / questions.length) * 100;
+        document.getElementById("progressBar").style.width = percent + "%";
+      }
+
+      function showPrize(img, text) {
+        onResponsePage = true;
+        quizContainer.innerHTML = `
+          <div class="progress-container"><div class="progress-bar" style="width:100%"></div></div>
+          <div class='prize'>
+            <div class="img-container">
+              <img src="${img}" alt="Celebration">
+            </div>
+            <p class='yes-text'>${text}</p>
+            <div class='location'>
+              📍 <a href="https://maps.app.goo.gl/zQvKkkmNSV16Jcwt9?g_st=ipc" target="_blank" style="color:#ffdd57;text-decoration:none;"><strong>Long Boat, Marathahalli</strong></a>
+            </div>
+            <p style="padding: 10px;"><b>Monday 15/09, 8:15 PM</b></p>
+            <a href="https://wa.me/9430470186?text=I%20commit%20to%20come%20at%208:15%20PM%20and%20not%20be%20late" 
+              target="_blank" 
+              class="whatsapp-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+                <path d="M16 .5C7.4.5.5 7.4.5 16c0 2.8.7 5.5 2 7.9L.6 31.4l7.7-1.9c2.3 1.3 5 2 7.7 2 8.6 0 15.5-6.9 15.5-15.5S24.6.5 16 .5zm0 28.1c-2.5 0-4.9-.7-7-2.1l-.5-.3-4.6 1.1 1.2-4.5-.3-.5c-1.3-2.1-2-4.5-2-7 0-7.1 5.8-12.9 12.9-12.9s12.9 5.8 12.9 12.9S23.1 28.6 16 28.6zm7.3-9.7c-.4-.2-2.2-1.1-2.5-1.2s-.6-.2-.9.2-1 1.2-1.3 1.5-.5.3-.9.1-1.8-.7-3.4-2.1c-1.3-1.2-2.1-2.6-2.4-3-.2-.4 0-.6.2-.8.2-.2.4-.5.6-.7.2-.2.3-.4.5-.7.2-.2.1-.5 0-.7-.2-.2-.9-2.1-1.2-2.9-.3-.7-.6-.6-.9-.6h-.7c-.2 0-.7.1-1.1.5-.4.4-1.4 1.3-1.4 3.2s1.4 3.7 1.6 3.9c.2.2 2.7 4.1 6.5 5.7.9.4 1.6.6 2.2.8.9.3 1.8.3 2.5.2.8-.1 2.2-.9 2.5-1.7.3-.8.3-1.5.2-1.7-.1-.3-.4-.4-.8-.6z"/>
+              </svg>
+              RSVP on WhatsApp
+            </a>
+          </div>
+        `;
+        backButton.style.display = "block";
+      }
+
+      renderQuestion();
     </script>
   </body>
 </html>
